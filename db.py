@@ -331,13 +331,11 @@ def seed_program():
     program_id = program["id"]
 
     # Day 1 - Upper 1
+    conn.execute(
+        "INSERT OR IGNORE INTO program_days (program_id, day_number, day_name, muscle_groups) VALUES (?, ?, ?, ?)",
+        (program_id, 1, "Upper 1", json.dumps(["Chest", "Back", "Shoulders", "Arms", "Legs"])),
+    )
     day1 = conn.execute("SELECT id FROM program_days WHERE program_id = ? AND day_number = ?", (program_id, 1)).fetchone()
-    if not day1:
-        conn.execute(
-            "INSERT INTO program_days (program_id, day_number, day_name, muscle_groups) VALUES (?, ?, ?, ?)",
-            (program_id, 1, "Upper 1", json.dumps(["Chest", "Back", "Shoulders", "Arms", "Legs"])),
-        )
-        day1 = conn.execute("SELECT id FROM program_days WHERE program_id = ? AND day_number = ?", (program_id, 1)).fetchone()
     day1_id = day1["id"]
 
     upper1_exercises = [
@@ -358,13 +356,11 @@ def seed_program():
             )
 
     # Day 2 - Lower 1
+    conn.execute(
+        "INSERT OR IGNORE INTO program_days (program_id, day_number, day_name, muscle_groups) VALUES (?, ?, ?, ?)",
+        (program_id, 2, "Lower 1", json.dumps(["Legs", "Back", "Chest", "Arms"])),
+    )
     day2 = conn.execute("SELECT id FROM program_days WHERE program_id = ? AND day_number = ?", (program_id, 2)).fetchone()
-    if not day2:
-        conn.execute(
-            "INSERT INTO program_days (program_id, day_number, day_name, muscle_groups) VALUES (?, ?, ?, ?)",
-            (program_id, 2, "Lower 1", json.dumps(["Legs", "Back", "Chest", "Arms"])),
-        )
-        day2 = conn.execute("SELECT id FROM program_days WHERE program_id = ? AND day_number = ?", (program_id, 2)).fetchone()
     day2_id = day2["id"]
 
     lower1_exercises = [
@@ -385,13 +381,11 @@ def seed_program():
             )
 
     # Day 3 - Upper 2
+    conn.execute(
+        "INSERT OR IGNORE INTO program_days (program_id, day_number, day_name, muscle_groups) VALUES (?, ?, ?, ?)",
+        (program_id, 3, "Upper 2", json.dumps(["Chest", "Back", "Shoulders", "Arms", "Legs"])),
+    )
     day3 = conn.execute("SELECT id FROM program_days WHERE program_id = ? AND day_number = ?", (program_id, 3)).fetchone()
-    if not day3:
-        conn.execute(
-            "INSERT INTO program_days (program_id, day_number, day_name, muscle_groups) VALUES (?, ?, ?, ?)",
-            (program_id, 3, "Upper 2", json.dumps(["Chest", "Back", "Shoulders", "Arms", "Legs"])),
-        )
-        day3 = conn.execute("SELECT id FROM program_days WHERE program_id = ? AND day_number = ?", (program_id, 3)).fetchone()
     day3_id = day3["id"]
 
     upper2_exercises = [
@@ -412,13 +406,11 @@ def seed_program():
             )
 
     # Day 4 - Lower 2
+    conn.execute(
+        "INSERT OR IGNORE INTO program_days (program_id, day_number, day_name, muscle_groups) VALUES (?, ?, ?, ?)",
+        (program_id, 4, "Lower 2", json.dumps(["Legs", "Back", "Arms"])),
+    )
     day4 = conn.execute("SELECT id FROM program_days WHERE program_id = ? AND day_number = ?", (program_id, 4)).fetchone()
-    if not day4:
-        conn.execute(
-            "INSERT INTO program_days (program_id, day_number, day_name, muscle_groups) VALUES (?, ?, ?, ?)",
-            (program_id, 4, "Lower 2", json.dumps(["Legs", "Back", "Arms"])),
-        )
-        day4 = conn.execute("SELECT id FROM program_days WHERE program_id = ? AND day_number = ?", (program_id, 4)).fetchone()
     day4_id = day4["id"]
 
     lower2_exercises = [
