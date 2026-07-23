@@ -122,7 +122,8 @@ conn.close()
 python3 workout.py list-days              # Show all program days
 python3 workout.py start-workout N        # Show exercises for day N
 python3 workout.py log-workout '<json>'   # Log workout
-python3 workout.py history                # Recent workouts
+python3 workout.py recent [n]             # Show last n workouts with details
+python3 workout.py history                # Recent workouts (compact)
 python3 workout.py workout N              # Show workout details
 python3 workout.py progress <exercise>    # Show progression
 python3 workout.py suggest <exercise>     # Suggest next weight

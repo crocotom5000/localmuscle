@@ -703,6 +703,51 @@ def cmd_stats(args):
             print(f"  {ex['name']}: {ex['count']} times")
 
 
+def cmd_recent(args):
+    """Show last 4 workouts with details."""
+    limit = int(args[0]) if args else 4
+    conn = get_db()
+
+    workouts = conn.execute(
+        """SELECT w.*, pd.day_name
+           FROM workouts w
+           LEFT JOIN program_days pd ON w.program_id = pd.program_id AND w.day_number = pd.day_number
+           ORDER BY w.date DESC, w.id DESC LIMIT ?""",
+        (limit,),
+    ).fetchall()
+
+    if not workouts:
+        print("No workouts found.")
+        return
+
+    for w in workouts:
+        day_name = w["day_name"] or "Workout"
+        print(f"\n{'='*60}")
+        print(f"Workout #{w['id']} | {w['date']} | {day_name}")
+
+        # Get exercises with their sets
+        exercises = conn.execute(
+            """SELECT e.name,
+                      GROUP_CONCAT(ws.reps || 'x' || CAST(CAST(ws.weight AS INT) AS TEXT), ', ') as sets,
+                      COUNT(*) as set_count,
+                      SUM(ws.reps * ws.weight) as volume
+               FROM workout_sets ws
+               JOIN exercises e ON ws.exercise_id = e.id
+               WHERE ws.workout_id = ?
+               GROUP BY e.name
+               ORDER BY MIN(ws.id)""",
+            (w["id"],),
+        ).fetchall()
+
+        # Print table
+        print(f"\n  {'Exercise':<30} {'Sets':>5} {'Reps':>20}")
+        print(f"  {'-'*30} {'-'*5} {'-'*20}")
+        for ex in exercises:
+            print(f"  {ex['name']:<30} {ex['set_count']:>5} {ex['sets']:>20}")
+
+    conn.close()
+
+
 COMMANDS = {
     "init": cmd_init,
     "lookup": cmd_lookup,
@@ -714,6 +759,7 @@ COMMANDS = {
     "get-next-workout": cmd_get_next_workout,
     "log-workout": cmd_log_workout,
     "add-set": cmd_add_set,
+    "recent": cmd_recent,
     "history": cmd_history,
     "workout": cmd_workout_detail,
     "progress": cmd_progress,
@@ -737,6 +783,7 @@ def main():
         print("  get-next-workout    - Get next workout to do")
         print("  log-workout <json>  - Log workout from JSON")
         print("  add-set             - Add single set to workout")
+        print("  recent [n]          - Show last n workouts (default 4)")
         print("  history             - Show workout history [limit]")
         print("  workout             - Show workout details")
         print("  progress            - Show exercise progress")

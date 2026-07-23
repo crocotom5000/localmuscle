@@ -35,7 +35,8 @@ Me:     ✓ Logged Upper 1 — 7 exercises, 22 sets
 | `list days` | Show all program days |
 | `start workout N` | Show exercises for day N |
 | `save` | Log the workout you just typed |
-| `history` | Show recent workouts |
+| `recent` | Show last 4 workouts with details |
+| `history` | Show recent workouts (compact) |
 | `workout N` | Show details for workout #N |
 | `progress <exercise>` | Show progression over time |
 | `suggest <exercise>` | Get next weight suggestion |
