@@ -7,6 +7,16 @@ A chat-based workout tracker that logs your sessions to a local SQLite database.
 - Python 3.10+
 - This repo cloned to `~/src/localmuscle`
 
+## Setup
+
+```bash
+# Initialize database with exercises and aliases
+python3 workout.py init
+
+# Load the training program
+python3 load_program.py
+```
+
 ## How It Works
 
 Talk to the bot in natural language. It parses your input and logs workouts to the database.
