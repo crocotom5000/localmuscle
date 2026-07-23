@@ -97,16 +97,75 @@ If you use an exercise not in the database, just tell the bot:
 | 3 | Upper 2 | Chest, Back, Shoulders, Arms, Calves |
 | 4 | Lower 2 | Legs, Back, Arms |
 
-## Data Storage
+## Data Model
 
-All data lives in `workouts.db` (SQLite). Backup this file to keep your history.
+```mermaid
+erDiagram
+    exercises ||--o{ exercise_aliases : "has"
+    exercises ||--o{ program_exercises : "prescribed in"
+    exercises ||--o{ workout_sets : "logged in"
 
-```
-exercises          - Exercise catalog
-exercise_aliases   - Shorthand names
-programs           - Training programs
-program_days       - Days within a program
-program_exercises  - Prescribed exercises per day
-workouts           - Logged workout sessions
-workout_sets       - Individual sets (one row per set)
+    programs ||--o{ program_days : "has"
+    programs ||--o{ workouts : "tracked in"
+
+    program_days ||--o{ program_exercises : "has"
+
+    workouts ||--o{ workout_sets : "has"
+
+    exercises {
+        int id PK
+        text name UK
+        text category
+        text muscle_group
+    }
+
+    exercise_aliases {
+        int id PK
+        int exercise_id FK
+        text alias UK
+    }
+
+    programs {
+        int id PK
+        text name UK
+        text description
+        int days_per_week
+    }
+
+    program_days {
+        int id PK
+        int program_id FK
+        int day_number
+        text day_name
+        text muscle_groups
+    }
+
+    program_exercises {
+        int id PK
+        int program_day_id FK
+        int exercise_id FK
+        int target_sets
+        text target_reps
+        int order_index
+    }
+
+    workouts {
+        int id PK
+        text date
+        text notes
+        int program_id FK
+        int day_number
+        text created_at
+    }
+
+    workout_sets {
+        int id PK
+        int workout_id FK
+        int exercise_id FK
+        int set_number
+        int reps
+        real weight
+        text weight_unit
+        text notes
+    }
 ```
