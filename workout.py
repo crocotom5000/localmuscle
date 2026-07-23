@@ -8,7 +8,8 @@ import sys
 import re
 import json
 from datetime import datetime, date
-from db import get_db, init_db, seed_exercises, seed_aliases, seed_program
+from db import get_db, init_db
+from seed import seed_exercises, seed_aliases, seed_program
 
 
 def fmt_weight(w):
