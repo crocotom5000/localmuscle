@@ -231,6 +231,46 @@ def cmd_list_days(args):
     conn.close()
 
 
+def get_last_workout_for_day(conn, program_id, day_number):
+    """Get the last workout for a specific day number, with exercise details."""
+    workout = conn.execute(
+        """SELECT w.id, w.date
+           FROM workouts w
+           WHERE w.program_id = ? AND w.day_number = ?
+           ORDER BY w.date DESC, w.id DESC LIMIT 1""",
+        (program_id, day_number),
+    ).fetchone()
+    if not workout:
+        return None
+
+    sets = conn.execute(
+        """SELECT e.name, ws.set_number, ws.reps, ws.weight, ws.weight_unit, ws.notes
+           FROM workout_sets ws
+           JOIN exercises e ON ws.exercise_id = e.id
+           WHERE ws.workout_id = ?
+           ORDER BY ws.id""",
+        (workout["id"],),
+    ).fetchall()
+
+    return {"date": workout["date"], "sets": sets}
+
+
+def print_last_workout(last):
+    """Print last workout summary for reference."""
+    print(f"\nLast time ({last['date']}):")
+    current_ex = None
+    sets_for_ex = []
+    for s in last["sets"]:
+        if s["name"] != current_ex:
+            if current_ex and sets_for_ex:
+                print(f"{current_ex} — {'  '.join(sets_for_ex)}")
+            current_ex = s["name"]
+            sets_for_ex = []
+        sets_for_ex.append(f"{s['reps']}x{fmt_weight(s['weight'])}")
+    if current_ex and sets_for_ex:
+        print(f"{current_ex} — {'  '.join(sets_for_ex)}")
+
+
 def cmd_start_workout(args):
     """Start a workout for a specific day: start-workout <day_number>"""
     if not args:
@@ -258,17 +298,11 @@ def cmd_start_workout(args):
     print(f"\n{day['day_name']}")
     print(f"{'='*40}")
 
-    exercises = conn.execute(
-        """SELECT e.name, pe.target_sets, pe.target_reps, pe.order_index
-           FROM program_exercises pe
-           JOIN exercises e ON pe.exercise_id = e.id
-           WHERE pe.program_day_id = ?
-           ORDER BY pe.order_index""",
-        (day["id"],),
-    ).fetchall()
-
-    for ex in exercises:
-        print(f"  {ex['order_index']}. {ex['name']} — {ex['target_sets']}x{ex['target_reps']}")
+    last = get_last_workout_for_day(conn, program["id"], day_number)
+    if last:
+        print_last_workout(last)
+    else:
+        print("  No history for this day yet.")
 
     print(f"\nType your sets when ready.")
     conn.close()
@@ -315,17 +349,11 @@ def cmd_get_next_workout(args):
     print(f"Next up: {day['day_name']}")
     print(f"{'='*40}")
 
-    exercises = conn.execute(
-        """SELECT e.name, pe.target_sets, pe.target_reps, pe.order_index
-           FROM program_exercises pe
-           JOIN exercises e ON pe.exercise_id = e.id
-           WHERE pe.program_day_id = ?
-           ORDER BY pe.order_index""",
-        (day["id"],),
-    ).fetchall()
-
-    for ex in exercises:
-        print(f"  {ex['order_index']}. {ex['name']} — {ex['target_sets']}x{ex['target_reps']}")
+    last = get_last_workout_for_day(conn, program_id, next_day)
+    if last:
+        print_last_workout(last)
+    else:
+        print("  No history for this day yet.")
 
     print(f"\nType your sets when ready.")
     conn.close()

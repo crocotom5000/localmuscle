@@ -1,2 +1,4 @@
 workouts.db
 __pycache__/
+.env
+logs/

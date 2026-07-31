@@ -178,4 +178,59 @@ erDiagram
         text weight_unit
         text notes
     }
+    ```
+
+## Backups
+
+The database is backed up daily to Google Cloud Storage at 2:00 AM. Backups are retained for 30 days.
+
+### Manual Backup
+
+```bash
+python3 backup.py              # Run backup
+python3 backup.py --dry-run    # Preview without uploading
 ```
+
+### Setup (one-time)
+
+1. Install dependencies:
+
+```bash
+pip install --break-system-packages -r requirements.txt
+```
+
+2. Create `.env` from the example:
+
+```bash
+cp .env.example .env
+# Edit .env with your values
+```
+
+3. Verify the cron job is installed:
+
+```bash
+crontab -l | grep localmuscle
+```
+
+### GCS Setup
+
+If you need to set up GCS access from scratch:
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Create a project (or use existing)
+3. Enable the **Cloud Storage API**
+4. Create a bucket (e.g., `localmuscle-backups`)
+5. Create a **Service Account** (IAM → Service Accounts)
+6. Grant it the **Storage Object Admin** role
+7. Download the JSON key to `~/localmuscle-*.json`
+8. Update `GOOGLE_APPLICATION_CREDENTIALS` in `.env`
+
+### Cron Job
+
+The backup runs daily via cron:
+
+```
+0 2 * * * cd /home/exedev/localmuscle && /usr/bin/python3 backup.py >> /home/exedev/localmuscle/logs/backup.log 2>&1
+```
+
+Logs are written to `logs/backup.log`.

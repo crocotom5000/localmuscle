@@ -7,7 +7,7 @@ This skill manages a local SQLite workout tracker at `~/src/localmuscle/`. It su
 ## Conversation Flow
 
 1. User says `list days` → run `python3 workout.py list-days`
-2. User says `start workout N` → run `python3 workout.py start-workout N`
+2. User says `start workout N` or `what's the next workout?` → run `python3 workout.py get-next-workout`, then present the last session's data as plain text (not as a code block)
 3. User types their sets in natural language
 4. User says `save` → parse input, construct JSON, run `python3 workout.py log-workout '<json>'`
 5. Confirm what was logged
@@ -119,9 +119,9 @@ conn.close()
 ## Common Commands
 
 ```bash
-python3 workout.py list-days              # Show all program days
-python3 workout.py start-workout N        # Show exercises for day N
-python3 workout.py log-workout '<json>'   # Log workout
+python3 workout.py get-next-workout       # Show next workout with last session's data
+python3 workout.py start-workout N        # Show day N with last session's data
+python3 workout.py log-workout '<json>'   # Log workout (day_number auto-determined)
 python3 workout.py recent [n]             # Show last n workouts with details
 python3 workout.py history                # Recent workouts (compact)
 python3 workout.py workout N              # Show workout details
