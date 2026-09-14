@@ -1,3 +1,8 @@
+---
+name: workout-tracker
+description: Use when the user logs, tracks, or reviews workouts with the local workout tracker (workout.py). Trigger on "list days", "start workout", "what's the next workout?", entering exercise sets, or "save". Handles parsing set input, exercise aliases, and the Dr. Swole program.
+---
+
 # Workout Tracker Skill
 
 ## Overview
@@ -41,12 +46,23 @@ row 3 8-12 8x110, 9x110
 leg ext 3x10 100, 110 hoist
 ```
 
+**Set repetition shortcut (xN):**
+`xN` after a set repeats that set so the set appears N total times. N is the total count, not the number of extra copies. Only the immediately-preceding set is repeated, and input continues normally after it:
+```
+10x100 x3            → 10x100, 10x100, 10x100
+10x100 12x100 x2     → 10x100, 12x100, 12x100
+10x100 x3 12x100     → 10x100, 10x100, 10x100, 12x100
+100 x3               → 8x100, 8x100, 8x100   (weight-only, defaults to 8 reps)
+```
+A note applies to every repeated set (`10x100 x3 strong` → three sets of 10x100, note "strong").
+
 ### Parsing Rules
 
 1. **Exercise name**: Everything before the first number. Use aliases from database.
 2. **Sets**: Either `NxW` (reps x weight) or just `W` (weight, default 8 reps)
-3. **Note**: Text after the last number on a line (e.g., "nautilus", "tough", "arsenal")
-4. **Separator**: Commas or spaces between sets
+3. **Repetition**: `xN` after a set means repeat the immediately-preceding set so it appears N times total (e.g., `10x100 x3` expands to 3 sets of 10x100). `xN` has no reps component, so it's never confused with the `NxW` reps x weight format. When expanding, output the repeated sets in order.
+4. **Note**: Text after the last number on a line (e.g., "nautilus", "tough", "arsenal")
+5. **Separator**: Commas or spaces between sets
 
 ### Constructing JSON
 
