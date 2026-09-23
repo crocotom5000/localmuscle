@@ -12,7 +12,7 @@ This skill manages a local SQLite workout tracker at `~/src/localmuscle/`. It su
 ## Conversation Flow
 
 1. User says `list days` → run `python3 workout.py list-days`
-2. User says `start workout N` or `what's the next workout?` → run `python3 workout.py get-next-workout`, then present the last session's data as plain text (not as a code block)
+2. User says `start workout N` or `what's the next workout?` → run `python3 workout.py get-next-workout`, then present the last session's data as plain text (not as a code block). **Include the session's notes** (printed as `Notes:` in the command output) so the user sees reminders from last time.
 3. User types their sets in natural language
 4. User may add a **feeling note** after the list of exercises (e.g., "felt strong", "tired"). Capture it as a top-level `"notes"` field in the JSON
 5. User says `save` → parse input, construct JSON, run `python3 workout.py log-workout '<json>'`

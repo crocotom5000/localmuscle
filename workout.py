@@ -234,7 +234,7 @@ def cmd_list_days(args):
 def get_last_workout_for_day(conn, program_id, day_number):
     """Get the last workout for a specific day number, with exercise details."""
     workout = conn.execute(
-        """SELECT w.id, w.date
+        """SELECT w.id, w.date, w.notes
            FROM workouts w
            WHERE w.program_id = ? AND w.day_number = ?
            ORDER BY w.date DESC, w.id DESC LIMIT 1""",
@@ -252,7 +252,7 @@ def get_last_workout_for_day(conn, program_id, day_number):
         (workout["id"],),
     ).fetchall()
 
-    return {"date": workout["date"], "sets": sets}
+    return {"date": workout["date"], "notes": workout["notes"], "sets": sets}
 
 
 def print_last_workout(last):
@@ -269,6 +269,9 @@ def print_last_workout(last):
         sets_for_ex.append(f"{s['reps']}x{fmt_weight(s['weight'])}")
     if current_ex and sets_for_ex:
         print(f"{current_ex} — {'  '.join(sets_for_ex)}")
+
+    if last.get("notes"):
+        print(f"Notes: {last['notes']}")
 
 
 def cmd_start_workout(args):
